@@ -86,9 +86,11 @@ void recuperarContadorFoto() {
 }
 
 bool inicializarSD() {
-  // En la XIAO ESP32S3 Sense, la microSD comparte pines con la cámara,
-  // por eso se usa el modo de 1 bit (bus más angosto) para evitar conflicto.
-  if (!SD_MMC.setPins(39, 40, 26)) { // CLK, CMD, D0 (ver silkscreen/datasheet)
+  // En la XIAO ESP32S3 Sense, el socket de microSD usa GPIO7 (CLK),
+  // GPIO9 (CMD) y GPIO8 (D0) en modo 1-bit -- pinout oficial de Seeed,
+  // NO 39/40/26 (esos son los pines I2C de control de la cámara,
+  // SIOC_GPIO_NUM/SIOD_GPIO_NUM, y chocaban con la SD).
+  if (!SD_MMC.setPins(7, 9, 8)) { // CLK, CMD, D0
     Serial.println("Fallo al asignar pines de SD_MMC");
     return false;
   }
